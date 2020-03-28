@@ -40,8 +40,6 @@ def dataframe_to_algolia(df):
     records = []
     df = df.where(pd.notnull(df), '')
     for i, row in df.iterrows():
-        if i >= 10:
-            break
         record = {}
         for col in report_cols:
             record[col] = row[col]
