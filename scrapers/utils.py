@@ -6,7 +6,6 @@ report_cols = ['siteName', 'siteStatus', 'siteAddress', 'siteState', 'siteZip', 
                'startDate', 'endDate', 'daysofOperation', 'breakfastTime', 'lunchTime', 'snackTimeAM',
                'snackTimePM', 'dinnerSupperTime']
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class ScrapingError(Exception):
     """json data url not found in html. Possible schema change."""

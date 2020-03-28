@@ -9,10 +9,12 @@ This is a Python webscraper to help https://www.nokidhungry.org keep resources u
 
 How To Use This
 ---------------
+Python Version 3.7.6
 
 1. Run `pip install -r requirements.txt` to install dependencies
-2. Run `python idaho.py` or other state
+2. Run `python app.py` or other state
+3. Select output format between .csv, .json, xlsx
 
 Testing
 -------
-To be added. 
+Testing to be added

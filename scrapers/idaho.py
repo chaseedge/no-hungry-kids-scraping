@@ -371,8 +371,6 @@ class ServiceDates(BaseParser):
             else:
                 return abbrevs[start:end + 1]
 
-
-
 class SiteDetails:
 
     @classmethod
