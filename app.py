@@ -1,6 +1,6 @@
 import os
 from scrapers.idaho import Idaho
-from scrapers.utils import report_cols
+from settings import report_cols
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")

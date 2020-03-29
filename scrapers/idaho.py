@@ -6,8 +6,8 @@ import dateparser
 import pandas as pd
 from datetime import timedelta
 
-from scrapers.utils import ScrapingError, days_abbrev, date_fmt
-
+from settings import days_abbrev, date_fmt, report_cols
+from scrapers.utils import ScrapingError
 
 class Idaho:
     def __init__(self):
@@ -16,15 +16,17 @@ class Idaho:
 
     def scrape(self):
         print("scraping....")
-        data = Scraper.scrape()
+        self.data = Scraper.scrape()
         print("loading data....")
-        self.df = self._load_dataframe(data)
+        self.df = self._load_dataframe()
+        self._add_columns()
+        self._add_coordinates()
         print("processing data....")
         self._process_df()
         return self.df
 
-    def _load_dataframe(self, data):
-        df = pd.DataFrame(data['dataRS'], columns=data['columnNames'])
+    def _load_dataframe(self):
+        df = pd.DataFrame(self.data['dataRS'], columns=self.data['columnNames'])
         col_map = {'Meal Service Address': 'siteAddress',
                    'City': 'siteCity',
                    'State': 'siteState',
@@ -35,14 +37,25 @@ class Idaho:
                    'Service Dates': 'serviceDates'
                    }
         df.columns = df.columns.map(col_map)
-        req_cols = ['startDate', 'endDate', 'daysofOperation', 'breakfastTime',
-                    'lunchTime', 'snackTimeAM', 'snackTimePM', 'dinnerSupperTime',
-                    "siteStatus"]
-        new_cols = ['hasBreakfast', 'hasLunch', 'hasSnackAM', 'hasSnackPM', 'hasDinnerSupper']
-        for col in req_cols + new_cols:
-            df[col] = None
-
         return df
+
+    def _add_columns(self):
+        for col in self.new_cols + report_cols:
+            if col not in self.df.columns:
+                self.df[col] = None
+
+    def _add_coordinates(self):
+        coords = pd.DataFrame(self.data['mapRS'])
+        # make sure the address from the coords maps to the address on the df
+        coords.a = coords.a.str.strip()
+        self.df.siteAddress = self.df.siteAddress.str.strip()
+        if sum(self.df.siteAddress != coords.a) == 0:
+            self.df['latitude'] = coords['lt']
+            self.df['longitude'] = coords['ln']
+            print("succesfully added coordinates")
+        else:
+            print("error in loading coordinates, addresses from map data do not match.\
+                          Coords have not been added.")
 
     def _process_df(self):
         self.df = self.df.apply(SiteDetails.process, axis=1)
