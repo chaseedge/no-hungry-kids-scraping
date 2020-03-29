@@ -1,6 +1,7 @@
 import os
+import argparse
 from scrapers.idaho import Idaho
-from scrapers.utils import report_cols
+from scrapers.utils import report_cols, dataframe_to_algolia
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -16,25 +17,24 @@ def get_report_format_type():
         return file_fmt
 
 def main():
-    file_fmt = get_report_format_type()
-    if not file_fmt:
-        print("%s is not a valid option, try again")
-        file_fmt = get_report_format_type()
-    if not file_fmt:
-        print("Incorrect again")
-        exit()
+    parser = argparse.ArgumentParser('Idaho Web Scraper')
+    parser.add_argument('-e', '--ext', help='Output extension', type=str, default='')
+    args = parser.parse_args()
 
     for state_name, scraper in scrapers_dict.items():
         df = scraper().scrape()
-        if file_fmt == "xlsx":
+        if args.ext == "xlsx":
             fn = os.path.join(DATA_DIR, f"{state_name}.xlsx")
             df[report_cols].to_excel(fn, index=False)
-        elif file_fmt == "csv":
+        elif args.ext == "csv":
             fn = os.path.join(DATA_DIR, f"{state_name}.csv")
             df[report_cols].to_csv(fn, index=False)
-        else:
+        elif args.ext == 'json':
             fn = os.path.join(DATA_DIR, f"{state_name}.json")
             df[report_cols].to_json(fn, orient="records")
+        else:
+            dataframe_to_algolia(df)
+
 
 if __name__ == "__main__":
     main()
