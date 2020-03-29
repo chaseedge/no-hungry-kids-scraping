@@ -49,7 +49,7 @@ def georeference_address(address):
 
 
 def dataframe_to_algolia(df):
-    client = SearchClient.create()
+    client = SearchClient.create(ALGOLIA_APP_ID, ALGOLIA_KEY)
     index = client.init_index('us_foodbank')
 
     records = []
