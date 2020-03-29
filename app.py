@@ -1,5 +1,6 @@
 import os
 from scrapers.idaho import Idaho
+from scrapers.usda_fns import scrape_and_save as scrape_usda
 from settings import report_cols
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -35,6 +36,8 @@ def main():
         else:
             fn = os.path.join(DATA_DIR, f"{state_name}.json")
             df[report_cols].to_json(fn, orient="records")
+
+    scrape_usda(os.path.join(DATA_DIR, "usda_fns_contacts.json"))
 
 if __name__ == "__main__":
     main()

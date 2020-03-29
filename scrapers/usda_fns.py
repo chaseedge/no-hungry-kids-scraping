@@ -106,7 +106,7 @@ def extract_contacts_from(card):
     return contacts
 
 
-def main():
+def scrape_and_save(filename):
     has_next = True
     i = 0
     data = []
@@ -121,8 +121,7 @@ def main():
         has_next = soup.find("a", {"rel": "next"})
         i += 1
 
-    with open("usda_fns_contacts.json", "w") as f:
+    with open(filename, "w") as f:
         json.dump(data, f)
 
-if __name__ == "__main__":
-    main()
+
