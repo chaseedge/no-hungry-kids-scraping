@@ -1,12 +1,14 @@
 import os
 import argparse
 from scrapers.idaho import Idaho
+from scrapers.delaware import Delaware
 from scrapers.utils import report_cols, dataframe_to_algolia
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
-scrapers_dict = {"idaho": Idaho}
+scrapers_dict = {"idaho": Idaho,
+                 "delaware": Delaware}
 
 def get_report_format_type():
     file_fmt = input("File type? [csv]/xlsx/json  ").strip().lower()
