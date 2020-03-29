@@ -24,6 +24,7 @@ def main():
     args = parser.parse_args()
 
     for state_name, scraper in scrapers_dict.items():
+        print("\n\n scraping %s now" % state_name)
         df = scraper().scrape()
         if args.ext == "xlsx":
             fn = os.path.join(DATA_DIR, f"{state_name}.xlsx")

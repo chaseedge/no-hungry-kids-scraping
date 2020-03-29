@@ -6,6 +6,16 @@ import requests
 import pandas as pd
 from dateutil import relativedelta
 from algoliasearch.search_client import SearchClient
+from dotenv import load_dotenv
+
+load_dotenv()
+GOOGLE_KEY = os.getenv('GOOGLE_KEY')
+ALGOLIA_APP_ID = os.getenv('ALGOLIA_APP_ID')
+ALGOLIA_KEY = os.getenv("ALGOLIA_KEY")
+
+assert GOOGLE_KEY is not None, "Missing GOOGLE_KEY in .env"
+assert ALGOLIA_APP_ID is not None, "Missing ALGOLIA_APP_ID key in .env"
+assert ALGOLIA_KEY is not None, "Missing ALGOLIA_KEY in .env"
 
 date_fmt = "%-m/%-d/%Y"  # m/d/YYYY
 days_abbrev = ["M","T","W","Th","F","Sa","S"]
@@ -23,7 +33,7 @@ def georeference_address(address):
     url = 'https://maps.googleapis.com/maps/api/geocode/json'
     data = {
         'address': address,
-        'key': 'AIzaSyB5bA37UmmnyvSpvrX3t9mhuUkVTn84Rlg'
+        'key': GOOGLE_KEY
     }
     response = requests.get(url, params=data)
 
@@ -39,7 +49,7 @@ def georeference_address(address):
 
 
 def dataframe_to_algolia(df):
-    client = SearchClient.create('JWHPBFC4T1', '0d4e43a67ee4dd5d1ea7a667aded6c7e')
+    client = SearchClient.create()
     index = client.init_index('us_foodbank')
 
     records = []

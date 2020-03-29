@@ -2,9 +2,8 @@ import requests
 import dateparser
 import pandas as pd
 from bs4 import BeautifulSoup
-from settings import date_fmt, report_cols
 
-from scrapers.utils import extract_weekday_range_or_weekdays, get_coords_from_google_map_url
+from scrapers.utils import extract_weekday_range_or_weekdays, get_coords_from_google_map_url, date_fmt, report_cols
 
 class Delaware:
     def __init__(self):
