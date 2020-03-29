@@ -4,8 +4,7 @@ import requests
 from lxml import etree
 import pandas as pd
 
-from settings import days_abbrev, date_fmt, report_cols
-from scrapers.utils import ScrapingError, extract_weekday_range, extract_month_day_range, extract_meal_times, extract_explict_days, clean_and_sort_days_list, extract_weekday_range_or_weekdays
+from scrapers.utils import ScrapingError, extract_weekday_range, extract_month_day_range, extract_meal_times, extract_explict_days, clean_and_sort_days_list, extract_weekday_range_or_weekdays,days_abbrev, date_fmt, report_cols
 
 
 class Idaho:

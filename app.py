@@ -19,7 +19,7 @@ def get_report_format_type():
         return file_fmt
 
 def main():
-    parser = argparse.ArgumentParser('Idaho Web Scraper')
+    parser = argparse.ArgumentParser('State Web Scraper')
     parser.add_argument('-e', '--ext', help='Output extension', type=str, default='')
     args = parser.parse_args()
 
