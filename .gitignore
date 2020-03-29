@@ -224,3 +224,7 @@ venv.bak/
 pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/venv,python,pycharm+all,jupyternotebooks
+
+# custom
+*.~lock.*
+scripts/
