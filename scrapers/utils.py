@@ -7,6 +7,13 @@ from settings import days_abbrev
 class ScrapingError(Exception):
     """json data url not found in html. Possible schema change."""
 
+def get_coords_from_google_map_url(url):
+    d = {}
+    coord_pattern = re.compile(r"3d(?P<latitude>\-?\d+\.\d+)\!4d(?P<longitude>\-?\d+\.\d+)")
+    m = re.search(coord_pattern, url)
+    if m:
+        d = m.groupdict()
+    return d
 
 def clean_and_sort_days_list(days_of_op: ["T", "M", "W"]) -> "M,T,W":
     """removes any duplicates from list and orders them according to the days_abbrev"""
@@ -86,7 +93,6 @@ def extract_month_day_range(text: "March 23-26 or March 23-April 5") -> ("start 
 
 def extract_explict_days(text: "Lunch M,W,F") -> ["M", "W", "F"]:
     """Searches for day 1-2 character days of the weeks"""
-    text = text.lower()
 
     days_p = re.compile(r"(\b[a-z]{1,2})(?:\s|\-|\,|\b)", flags=re.I)
     days = re.findall(days_p, text) or []
@@ -167,3 +173,12 @@ def extract_meal_times(text: 'Breakfast: 7:30 AM - 9:00 AM; Lunch: 11:00 AM - 12
         if re.search("(?:supper)|(?:dinner)", meal, flags=re.I):
             d['dinnerSupperTime'] = time
     return d
+
+def extract_weekday_range_or_weekdays(text: 'Breakfast M-Th') -> ["M", "T", "W", "Th"]:
+    """Extracts day range like Monday-Sunday or M-W and also specific days like M,W,Th
+    """
+    # check for range first
+    days = extract_weekday_range(text)
+    if not days:
+        days = extract_explict_days(text)
+    return days

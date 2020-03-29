@@ -5,7 +5,7 @@ from lxml import etree
 import pandas as pd
 
 from settings import days_abbrev, date_fmt, report_cols
-from scrapers.utils import ScrapingError, extract_weekday_range, extract_month_day_range, extract_meal_times, extract_explict_days, clean_and_sort_days_list
+from scrapers.utils import ScrapingError, extract_weekday_range, extract_month_day_range, extract_meal_times, extract_explict_days, clean_and_sort_days_list, extract_weekday_range_or_weekdays
 
 
 class Idaho:
@@ -168,19 +168,11 @@ class MealTypes:
             else:
                 d['hasSnackAM'] = True
 
-        days_of_op = cls._extract_days_from_meal_types(text)
+        days_of_op = extract_weekday_range_or_weekdays(text)
         if days_of_op:
             d['daysofOperation'] = clean_and_sort_days_list(days_of_op)
 
         return d
-
-    @classmethod
-    def _extract_days_from_meal_types(cls, text: 'Breakfast M-Th') -> ["M", "T", "W", "Th"]:
-        # check for range first
-        days = extract_weekday_range(text)
-        if not days:
-            days = extract_explict_days(text)
-        return days
 
 
 class ServiceDates:
@@ -243,6 +235,3 @@ class SiteDetails:
     def _clean_phone(row):
         row['contactPhone'] = "".join(re.findall("\d", row['contactPhone']))
         return row
-
-
-
