@@ -6,16 +6,7 @@ import requests
 import pandas as pd
 from dateutil import relativedelta
 from algoliasearch.search_client import SearchClient
-from dotenv import load_dotenv
 
-load_dotenv()
-GOOGLE_KEY = os.getenv('GOOGLE_KEY')
-ALGOLIA_APP_ID = os.getenv('ALGOLIA_APP_ID')
-ALGOLIA_KEY = os.getenv("ALGOLIA_KEY")
-
-assert GOOGLE_KEY is not None, "Missing GOOGLE_KEY in .env"
-assert ALGOLIA_APP_ID is not None, "Missing ALGOLIA_APP_ID key in .env"
-assert ALGOLIA_KEY is not None, "Missing ALGOLIA_KEY in .env"
 
 date_fmt = "%-m/%-d/%Y"  # m/d/YYYY
 days_abbrev = ["M","T","W","Th","F","Sa","S"]
@@ -28,51 +19,6 @@ report_cols = ['siteName', 'siteStatus', 'siteAddress', 'siteState', 'siteZip', 
 class ScrapingError(Exception):
     """json data url not found in html. Possible schema change."""
 
-
-def georeference_address(address):
-    url = 'https://maps.googleapis.com/maps/api/geocode/json'
-    data = {
-        'address': address,
-        'key': GOOGLE_KEY
-    }
-    response = requests.get(url, params=data)
-
-    if response.status_code != 200:
-        return
-
-    response = response.json()
-    if not response['results']:
-        return
-
-    result = response['results'][0]  # assuming only 1 result for now
-    return result['geometry']['location']
-
-
-def dataframe_to_algolia(df):
-    client = SearchClient.create(ALGOLIA_APP_ID, ALGOLIA_KEY)
-    index = client.init_index('us_foodbank')
-
-    records = []
-    df = df.where(pd.notnull(df), '')
-    for i, row in df.iterrows():
-        record = {}
-        for col in report_cols:
-            record[col] = row[col]
-
-        location = georeference_address(record['siteAddress'])
-        if location is None:
-            print('Could not geo reference location: ({0}, {1})'.format(record['siteName'], record['siteAddress']))
-            continue
-
-        record['_geoloc'] = location
-
-        open_times = row['breakfastTime':'dinnerSupperTime'].tolist()
-        open_times = [time for time in open_times if time]
-        record['openTimes'] = ', '.join(open_times)
-
-        records.append(record)
-
-    index.save_objects(records, {'autoGenerateObjectIDIfNotExist': True})
 
 def get_coords_from_google_map_url(url):
     d = {}
